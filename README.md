@@ -15,3 +15,9 @@ You can view it at : [Aww.awarder - Team Praise App](https://nrobert-dev.github.
  3. Run the command : *wasm-pack build --target web --out-name wasm --out-dir ./static*
  4. Serve the contents of the /static folder using your favourite file-server
 
+# Under works
+
+The following features are under development/proposed for development:
+ 1. Save the praises in a database + request the praises when opening the awarder
+ 2. Praise box live update when a user posts something new
+
