@@ -1,38 +1,18 @@
-use wasm_bindgen::prelude::*;
 use yew::prelude::*;
 use yew::services::ConsoleService;
-use yew::services::storage;
 use crate::app_router::{AppRoute,Link};
-use serde::{Deserialize, Serialize};
 use yew::format::Json;
 use yew::services::storage::Area;
 use yew::services::StorageService;
 
+use crate::data_structures;
 
-
-pub const KEY: &'static str = "yew.aww.ards.database";
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct Database {
-    members : Vec<String>
-}
-
-impl Database {
-    pub fn new() -> Self {
-        Database { members : Vec::new()}
-    }
-}
-
-
-struct MainPageInputs {
-    team_name_input : String,
-    team_member_input : String
-}
 
 pub struct Home {
     link: ComponentLink<Self>,
-    inputs : MainPageInputs,
+    inputs : data_structures::MainPageInputs,
     storage: StorageService,
-    database: Database,
+    database: data_structures::Database,
 }
 
 pub enum Msg {
@@ -47,12 +27,12 @@ impl Component for Home {
     type Properties = ();
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
         let storage = StorageService::new(Area::Local).unwrap();
-        let Json(database) = storage.restore(KEY);
-        let database = database.unwrap_or_else(|_| Database::new());
+        let Json(database) = storage.restore(data_structures::KEY);
+        let database = database.unwrap_or_else(|_| data_structures::Database::new());
 
         Self {
             link,
-            inputs : MainPageInputs {
+            inputs : data_structures::MainPageInputs {
                 team_name_input : String::from("Watermelon"),
                 team_member_input : String::from("Anonymous")
             },
@@ -74,20 +54,20 @@ impl Component for Home {
             Msg::AddTeamMember => {
                 if self.inputs.team_member_input != "" {
                     self.database.members.push(self.inputs.team_member_input.clone());
-                    self.storage.store(KEY, Json(&self.database));
+                    self.storage.store(data_structures::KEY, Json(&self.database));
 
                     self.inputs.team_member_input = String::from("");
                 }
             }
             Msg::RemoveMember(member_id) => {
                 self.database.members.remove(member_id);
-                self.storage.store(KEY, Json(&self.database));
+                self.storage.store(data_structures::KEY, Json(&self.database));
             }
         }
         true
     }
 
-    fn change(&mut self, _props: Self::Properties) -> ShouldRender {
+    fn change(&mut self, _: Self::Properties) -> ShouldRender {
         false
     }
 
@@ -124,7 +104,7 @@ impl Component for Home {
         html! {
             <div class="mainContainer">
                 <h1><span style="color:#e9c46a;">{"Aww"}</span><span style="color:#e76f51">{".wards"}</span></h1>
-                <p class="subText">{" Your bi-mhonthly teammate appreciation platform"}</p>
+                <p class="subText">{" Your bi-monthly teammate appreciation platform"}</p>
                 <div style="display:flex;width:100%;height:220px;">
                     <div class="inputs">
                         <div>

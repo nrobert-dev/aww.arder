@@ -4,9 +4,11 @@ mod pages;
 
 use wasm_bindgen::prelude::*;
 use yew::prelude::*;
-use yew::services::ConsoleService;
+
 
 mod app_router;
+mod data_structures;
+
 use app_router::AppRouter;
 
 struct Model {}

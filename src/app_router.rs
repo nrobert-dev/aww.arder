@@ -1,31 +1,27 @@
-use wasm_bindgen::prelude::*;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
 use crate::pages;
 
 
-pub struct AppRouter {
-}
-
 pub type Link = RouterAnchor<AppRoute>;
-
 #[derive(Switch,Debug,Clone)]
 pub enum AppRoute{
     #[to = "/awards/{team_name}"]
     Awards(String),
     #[to = "/"]
-    Index,
+    Index
 }
 
+pub struct AppRouter {}
 impl Component for AppRouter {
     type Message = ();
     type Properties = ();
-    fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
+    fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
         Self {}
     }
 
-    fn update(&mut self, msg: Self::Message) -> ShouldRender {
+    fn update(&mut self, _: Self::Message) -> ShouldRender {
         false
     }
 

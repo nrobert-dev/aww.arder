@@ -1,43 +1,18 @@
-use wasm_bindgen::prelude::*;
 use yew::prelude::*;
-use yew::services::ConsoleService;
-use serde::{Deserialize, Serialize};
 use yew::format::Json;
 use yew::services::storage::Area;
 use yew::services::StorageService;
 
+use crate::data_structures;
 
-pub const KEY: &'static str = "yew.aww.ards.database";
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct Database {
-    members : Vec<String>
-}
-impl Database {
-    pub fn new() -> Self {
-        Database { members : Vec::new()}
-    }
-}
-
-struct AwardOptions {
-    from : String,
-    to : String,
-    award : String
-}
-
-struct OfficialAward {
-    from : String,
-    to : String,
-    award : String,
-    message : String
-}
 
 pub struct Awards {
     link : ComponentLink<Self>,
     props : Props,
     members: Vec<String>,
-    options : AwardOptions,
+    options : data_structures::AwardOptions,
     message : String,
-    awards : Vec<OfficialAward>
+    awards : Vec<data_structures::OfficialAward>
 }
 
 #[derive(Clone,Debug,Properties)]
@@ -56,14 +31,14 @@ impl Component for Awards {
     type Properties = Props;
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
         let storage = StorageService::new(Area::Local).unwrap();
-        let Json(database) = storage.restore(KEY);
-        let database = database.unwrap_or_else(|_| Database::new());
+        let Json(database) = storage.restore(data_structures::KEY);
+        let database = database.unwrap_or_else(|_| data_structures::Database::new());
         let members = database.members;
 
         Self {
             link,
             props,
-            options : AwardOptions {
+            options : data_structures::AwardOptions {
                 from : String::from(&members[0].clone()),
                 to : String::from(&members[1].clone()),
                 award : String::from("🌼"),
@@ -89,7 +64,7 @@ impl Component for Awards {
                 }
             }
             Msg::AddAward => {
-                let award = OfficialAward{
+                let award = data_structures::OfficialAward{
                     from : self.options.from.clone(),
                     to : self.options.to.clone(),
                     award : self.options.award.clone(),
@@ -107,7 +82,7 @@ impl Component for Awards {
     }
 
     fn view(&self) -> Html {
-        let populate_members = |(i, member): (usize, &String)| {
+        let populate_members = |(_, member): (usize, &String)| {
             html! {
                                            <option value={member}>
                                                {member}
@@ -116,7 +91,7 @@ impl Component for Awards {
                                    }
         };
 
-        let view_awards = |(i, award): (usize, &OfficialAward)| {
+        let view_awards = |(_, award): (usize, &data_structures::OfficialAward)| {
             html!{
                 <div>
                        <p style="font-weight:bold;">{award.award.clone()}{" TO: "}<span style="color:purple;font-size:20px">{award.to.clone()}</span></p>
@@ -126,7 +101,7 @@ impl Component for Awards {
         };
 
         let message_on_change = self.link.callback(|e: InputData| Msg::OnMessageChange(e.value));
-        let give_award = self.link.callback(|e| Msg::AddAward);
+        let give_award = self.link.callback(|_| Msg::AddAward);
 
 
         html! {
@@ -198,5 +173,3 @@ impl Component for Awards {
             }
         }
         }
-
-
